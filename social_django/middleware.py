@@ -34,6 +34,8 @@ class SocialAuthExceptionMiddleware(MiddlewareMixin):
             backend_name = getattr(backend, 'name', 'unknown-backend')
 
             message = self.get_message(request, exception)
+            social_logger.warning(message)
+
             url = self.get_redirect_uri(request, exception)
 
             if apps.is_installed('django.contrib.messages'):
