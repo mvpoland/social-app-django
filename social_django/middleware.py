@@ -5,11 +5,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.api import MessageFailure
 from django.shortcuts import redirect
-from django.utils.http import urlquote
+from urllib.parse import quote
 
 from social_core.exceptions import SocialAuthBaseException
 from social_core.utils import social_logger
-from .compat import MiddlewareMixin
+from django.utils.deprecation import MiddlewareMixin
 
 
 class SocialAuthExceptionMiddleware(MiddlewareMixin):
@@ -45,7 +45,7 @@ class SocialAuthExceptionMiddleware(MiddlewareMixin):
                 except MessageFailure:
                     if url:
                         url += ('?' in url and '&' or '?') + \
-                               'message={0}&backend={1}'.format(urlquote(message),
+                               'message={0}&backend={1}'.format(quote(message),
                                                                 backend_name)
             else:
                 social_logger.warning(message)

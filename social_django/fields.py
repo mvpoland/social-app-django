@@ -1,10 +1,8 @@
 import json
-import six
-
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from social_core.utils import setting_name
 
@@ -34,9 +32,9 @@ class JSONField(JSONFieldBase):
         if self.blank and not value:
             return {}
         value = value or '{}'
-        if isinstance(value, six.binary_type):
-            value = six.text_type(value, 'utf-8')
-        if isinstance(value, six.string_types):
+        if isinstance(value, bytes):
+            value = str(value, 'utf-8')
+        if isinstance(value, str):
             try:
                 return json.loads(value)
             except Exception as err:
@@ -47,7 +45,7 @@ class JSONField(JSONFieldBase):
     def validate(self, value, model_instance):
         """Check value is a valid JSON string, raise ValidationError on
         error."""
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             super(JSONField, self).validate(value, model_instance)
             try:
                 json.loads(value)
@@ -63,7 +61,7 @@ class JSONField(JSONFieldBase):
 
     def value_to_string(self, obj):
         """Return value from object converted to string properly"""
-        return force_text(self.value_from_object(obj))
+        return force_str(self.value_from_object(obj))
 
     def value_from_object(self, obj):
         """Return value dumped to string."""

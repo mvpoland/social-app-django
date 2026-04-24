@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import
 
 from datetime import timedelta
 
-import mock
+from unittest import mock
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.db import IntegrityError
@@ -11,7 +11,6 @@ from django.test import TestCase
 
 from social_django.models import AbstractUserSocialAuth, Association, Code, \
     DjangoStorage, Nonce, Partial, UserSocialAuth
-from .compat import username_max_length
 
 
 class TestSocialAuthUser(TestCase):
@@ -170,7 +169,7 @@ class TestUserSocialAuth(TestCase):
 
     def test_username_max_length(self):
         self.assertEqual(UserSocialAuth.username_max_length(),
-                         username_max_length)
+                         150)
 
 
 class TestNonce(TestCase):

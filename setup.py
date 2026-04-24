@@ -5,27 +5,12 @@ import re
 from os.path import join, dirname
 from setuptools import setup
 
+import social_django
 
-VERSION_RE = re.compile('__version__ = \'([\d\.]+)\'')
-
-
-def read_version():
-    with open('social_django/__init__.py') as file:
-        version_line = [line for line in file.readlines()
-                        if line.startswith('__version__')][0]
-        return VERSION_RE.match(version_line).groups()[0]
-
-
-def long_description():
-    return open(join(dirname(__file__), 'README.md')).read()
-
-
-def load_requirements():
-    return open(join(dirname(__file__), 'requirements.txt')).readlines()
 
 setup(
     name='social-auth-app-django',
-    version=read_version(),
+    version=social_django.__version__,
     author='Matias Aguirre',
     author_email='matiasaguirre@gmail.com',
     description='Python Social Authentication, Django integration.',
@@ -38,18 +23,11 @@ setup(
         'social_django.management',
         'social_django.management.commands',
     ],
-    long_description=long_description(),
     long_description_content_type='text/markdown',
-    install_requires=load_requirements(),
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Topic :: Internet',
-        'License :: OSI Approved :: BSD License',
-        'Intended Audience :: Developers',
-        'Environment :: Web Environment',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3'
+    install_requires=[
+        'Django>=3.2',
+        'social-auth-core>=3.3.3',
     ],
+    python_requires=">=3.9",
     zip_safe=False
 )

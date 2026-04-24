@@ -1,6 +1,5 @@
 """Django ORM models for Social Auth"""
 import base64
-import six
 import sys
 from django.core.exceptions import FieldDoesNotExist
 from django.db import transaction, router
@@ -90,7 +89,7 @@ class DjangoUserMixin(UserMixin):
             try:
                 user = cls.user_model().objects.get(*args, **kwargs)
             except cls.user_model().DoesNotExist:
-                six.reraise(*exc_info)
+                raise exc_info[1].with_traceback(exc_info[2])
         return user
 
     @classmethod
@@ -110,7 +109,7 @@ class DjangoUserMixin(UserMixin):
 
     @classmethod
     def get_social_auth(cls, provider, uid):
-        if not isinstance(uid, six.string_types):
+        if not isinstance(uid, str):
             uid = str(uid)
         try:
             return cls.objects.get(provider=provider, uid=uid)
@@ -130,7 +129,7 @@ class DjangoUserMixin(UserMixin):
 
     @classmethod
     def create_social_auth(cls, user, uid, provider):
-        if not isinstance(uid, six.string_types):
+        if not isinstance(uid, str):
             uid = str(uid)
         if hasattr(transaction, 'atomic'):
             # In Django versions that have an "atomic" transaction decorator / context

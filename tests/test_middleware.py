@@ -1,15 +1,14 @@
 # coding=utf-8
 import logging
 
-import mock
+from unittest import mock
 
 from django.contrib.messages import MessageFailure
 from django.http import HttpResponseRedirect
 from django.test import TestCase, override_settings
 
 from social_core.exceptions import AuthCanceled
-from social_django.compat import reverse
-from .compat import base_url
+from django.urls import reverse
 
 
 class MockAuthCanceled(AuthCanceled):
@@ -47,13 +46,13 @@ class TestMiddleware(TestCase):
     def test_login_error_url(self, mocked):
         response = self.client.get(self.complete_url)
         self.assertTrue(isinstance(response, HttpResponseRedirect))
-        self.assertEqual(response.url, base_url + '/')
+        self.assertEqual(response.url, '/')
 
     @override_settings(SOCIAL_AUTH_LOGIN_ERROR_URL='/')
     @mock.patch('django.contrib.messages.error', side_effect=MessageFailure)
     def test_message_failure(self, mocked_request, mocked_error):
         response = self.client.get(self.complete_url)
         self.assertTrue(isinstance(response, HttpResponseRedirect))
-        self.assertEqual(response.url, base_url +
+        self.assertEqual(response.url,
                          '/?message=Authentication%20process%20canceled'
                          '&backend=facebook')
