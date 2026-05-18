@@ -1,12 +1,7 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.utils.functional import SimpleLazyObject
-from django.utils.http import urlquote
-
-try:
-    from django.utils.functional import empty as _empty
-    empty = _empty
-except ImportError:  # django < 1.4
-    empty = None
+from urllib.parse import quote
+from django.utils.functional import empty
 
 
 from social_core.backends.utils import user_backends_data
@@ -40,7 +35,7 @@ def login_redirect(request):
                 request.POST.get(REDIRECT_FIELD_NAME) or \
                 request.GET.get(REDIRECT_FIELD_NAME)
     if value:
-        value = urlquote(value)
+        value = quote(value)
         querystring = REDIRECT_FIELD_NAME + '=' + value
     else:
         querystring = ''

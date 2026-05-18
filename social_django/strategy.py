@@ -7,12 +7,11 @@ from django.contrib.auth import authenticate
 from django.shortcuts import redirect, resolve_url
 from django.template import TemplateDoesNotExist, loader, engines
 from django.utils.crypto import get_random_string
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.functional import Promise
 from django.utils.translation import get_language
 
 from social_core.strategy import BaseStrategy, BaseTemplateStrategy
-from .compat import get_request_port
 
 
 def render_template_string(request, html, context=None):
@@ -44,7 +43,7 @@ class DjangoStrategy(BaseStrategy):
         # Force text on URL named settings that are instance of Promise
         if name.endswith('_URL'):
             if isinstance(value, Promise):
-                value = force_text(value)
+                value = force_str(value)
             value = resolve_url(value)
         return value
 
@@ -74,7 +73,7 @@ class DjangoStrategy(BaseStrategy):
 
     def request_port(self):
         """Port in use for this request"""
-        return get_request_port(request=self.request)
+        return self.request.get_port()
 
     def request_get(self):
         """Request GET data"""

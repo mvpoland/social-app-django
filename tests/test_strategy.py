@@ -1,14 +1,14 @@
 # coding=utf-8
 from __future__ import unicode_literals, absolute_import
 
-import mock
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import QueryDict, HttpResponse
 from django.test import TestCase, RequestFactory
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 
 from social_django.utils import load_strategy, load_backend
 
@@ -17,7 +17,7 @@ class TestStrategy(TestCase):
     def setUp(self):
         self.request_factory = RequestFactory()
         self.request = self.request_factory.get('/', data={'x': '1'})
-        SessionMiddleware().process_request(self.request)
+        SessionMiddleware(lambda req: None).process_request(self.request)
         self.strategy = load_strategy(request=self.request)
 
     def test_request_methods(self):
@@ -38,7 +38,7 @@ class TestStrategy(TestCase):
     def test_settings(self):
         with self.settings(LOGIN_ERROR_URL='/'):
             self.assertEqual(self.strategy.get_setting('LOGIN_ERROR_URL'), '/')
-        with self.settings(LOGIN_ERROR_URL=ugettext_lazy('/')):
+        with self.settings(LOGIN_ERROR_URL=gettext_lazy('/')):
             self.assertEqual(self.strategy.get_setting('LOGIN_ERROR_URL'), '/')
 
     def test_session_methods(self):

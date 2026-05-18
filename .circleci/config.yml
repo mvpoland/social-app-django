@@ -1,58 +1,19 @@
 version: 2.1
 
-
-common: &common
-  working_directory: ~/project
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - v2-deps-{{ .Environment.CIRCLE_JOB }}-{{ checksum "dev-requirements.txt" }}-{{ checksum "tox.ini" }}
-    - run:
-        name: install dependencies
-        command: pip install --user tox
-    - run:
-        name: run tox
-        command: ~/.local/bin/tox -i https://$PYPI_USER:$PYPI_PASS@pypi.mvpl.eu/simple/
-    - save_cache:
-        paths:
-          - .tox
-          - ~/.cache/pip
-          - ~/.local
-          - ./eggs
-        key: v2-deps-{{ .Environment.CIRCLE_JOB }}-{{ checksum "dev-requirements.txt" }}-{{ checksum "tox.ini" }}
-
-
 jobs:
-  py35:
-    <<: *common
+  build_and_test:
     docker:
-      - image: circleci/python:3.5
-        environment:
-          TOXENV=py35-django-20,py35-django-21,py35-django-22
-  py36:
-    <<: *common
-    docker:
-      - image: circleci/python:3.6
-        environment:
-          TOXENV=py36-django-20,py36-django-21,py36-django-22
-  py37:
-    <<: *common
-    docker:
-      - image: circleci/python:3.7
-        environment:
-          TOXENV=py37-django-20,py37-django-21,py37-django-22
-  py38:
-    <<: *common
-    docker:
-      - image: circleci/python:3.8
-        environment:
-          TOXENV=py38-django-22,py38-django-30,py38-django-31
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: pip install .
+      - run:
+          name: run tests
+          command: python manage.py test
 
 workflows:
   test:
     jobs:
-      - py35
-      - py36
-      - py37
-      - py38
+      - build_and_test
